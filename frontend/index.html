@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>The Growth Gram AI Image Generator</h1>
+        <p>Describe the image you want to create. Be as specific as you can!</p>
+
+        <div class="input-area">
+            <textarea id="prompt-input" rows="3" placeholder="e.g., An astronaut riding a horse on Mars, cinematic lighting"></textarea>
+            <button id="generate-btn">Generate</button>
+        </div>
+
+        <div id="result-area">
+            <div id="loading-spinner" class="hidden"></div>
+            <img id="result-image" src="" alt="Generated AI Image">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
