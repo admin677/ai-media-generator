@@ -5,7 +5,7 @@ const resultImage = document.getElementById("result-image");
 const loadingSpinner = document.getElementById("loading-spinner");
 
 // The URL of our backend server. Make sure the port matches the one in app.py
-const BACKEND_URL = "http://127.0.0.1:5001";
+const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
 
 // Add an event listener for the 'click' event on the generate button
 generateBtn.addEventListener("click", async () => {
