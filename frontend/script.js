@@ -22,29 +22,26 @@ if (savedTheme === 'dark') {
 // --- End of Theme Switcher Logic ---
 
 
-// --- Image Generator Logic (existing code) ---
+// --- Image Generator Logic ---
 const promptInput = document.getElementById("prompt-input");
 const generateBtn = document.getElementById("generate-btn");
 const resultImage = document.getElementById("result-image");
 const loadingSpinner = document.getElementById("loading-spinner");
 
-// The URL of our backend server. Make sure the port matches the one in app.py
+// This is the backend server we deployed on Render
 const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
 
-// Add an event listener for the 'click' event on the generate button
+// Main function to handle the generate button click
 generateBtn.addEventListener("click", async () => {
-    // Get the prompt text from the input field
     const prompt = promptInput.value;
     if (!prompt) {
         alert("Please enter a prompt!");
         return;
     }
 
-    // --- Start the generation process ---
     setLoading(true);
 
     try {
-        // Make a POST request to our backend's /generate-image endpoint
         const response = await fetch(`${BACKEND_URL}/generate-image`, {
             method: 'POST',
             headers: {
@@ -53,40 +50,43 @@ generateBtn.addEventListener("click", async () => {
             body: JSON.stringify({ prompt: prompt }),
         });
 
-        // Check if the request was successful
+        // If the server response is not "OK" (e.g., status 500), handle the error
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Try to get a specific error message from the backend, or use a default
+            const errorData = await response.json().catch(() => ({ error: 'The server returned an error.' }));
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
         }
 
-        // Parse the JSON response from the server
         const data = await response.json();
         
-        // The image data is a base64 string. We need to format it
-        // so it can be used in an 'src' attribute for an <img> tag.
+        // Format the base64 image data for display
         const imageDataUrl = `data:image/png;base64,${data.image_b64}`;
         
-        // Set the source of the image element to display the new image
+        // Set the image source and make it visible
         resultImage.src = imageDataUrl;
-        resultImage.style.display = "block"; // Make the image visible
+        resultImage.style.display = "block";
 
     } catch (error) {
-        // Log any errors and show an alert to the user
         console.error("Error generating image:", error);
-        alert("Failed to generate image. Please check the console for details.");
+        alert(`Failed to generate image. Error: ${error.message}`);
     } finally {
-        // --- End the generation process ---
         setLoading(false);
     }
 });
 
-// A helper function to manage the loading state
+/**
+ * Manages the UI loading state.
+ * @param {boolean} isLoading - True if loading should start, false if it should end.
+ */
 function setLoading(isLoading) {
+    generateBtn.disabled = isLoading;
     if (isLoading) {
-        generateBtn.disabled = true; // Disable the button
-        loadingSpinner.classList.remove("hidden"); // Show the spinner
-        resultImage.style.display = "none"; // Hide the old image
+        loadingSpinner.classList.remove("hidden");
+        // Hide the previous image while a new one is generating
+        resultImage.style.display = "none";
     } else {
-        generateBtn.disabled = false; // Re-enable the button
-        loadingSpinner.classList.add("hidden"); // Hide the spinner
+        // When loading is finished, just hide the spinner.
+        // The image will be made visible only on success in the try block.
+        loadingSpinner.classList.add("hidden");
     }
 }

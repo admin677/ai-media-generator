@@ -54,14 +54,15 @@ body {
     align-items: center;
     box-shadow: 0 4px 12px var(--shadow-color);
     transition: background-color 0.3s, border-color 0.3s;
+    z-index: 100;
 }
 #theme-switcher svg {
     fill: var(--text-color);
     transition: fill 0.3s;
 }
 .moon-icon { display: none; }
-.dark-theme .moon-icon { display: block; }
-.dark-theme .sun-icon { display: none; }
+body.dark-theme .moon-icon { display: block; }
+body.dark-theme .sun-icon { display: none; }
 
 
 /* --- Main Container Styling --- */
