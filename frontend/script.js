@@ -1,4 +1,28 @@
-// Get references to the HTML elements we'll be working with
+// --- Theme Switcher Logic ---
+const themeSwitcher = document.getElementById('theme-switcher');
+const body = document.body;
+
+// On button click, toggle the 'dark-theme' class on the body
+themeSwitcher.addEventListener('click', () => {
+    body.classList.toggle('dark-theme');
+    
+    // Save the user's preference to localStorage
+    if (body.classList.contains('dark-theme')) {
+        localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
+    }
+});
+
+// On page load, apply the saved theme from localStorage
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    body.classList.add('dark-theme');
+}
+// --- End of Theme Switcher Logic ---
+
+
+// --- Image Generator Logic (existing code) ---
 const promptInput = document.getElementById("prompt-input");
 const generateBtn = document.getElementById("generate-btn");
 const resultImage = document.getElementById("result-image");
@@ -36,11 +60,11 @@ generateBtn.addEventListener("click", async () => {
 
         // Parse the JSON response from the server
         const data = await response.json();
-
+        
         // The image data is a base64 string. We need to format it
         // so it can be used in an 'src' attribute for an <img> tag.
         const imageDataUrl = `data:image/png;base64,${data.image_b64}`;
-
+        
         // Set the source of the image element to display the new image
         resultImage.src = imageDataUrl;
         resultImage.style.display = "block"; // Make the image visible

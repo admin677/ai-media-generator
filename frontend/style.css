@@ -1,5 +1,17 @@
-/* --- Global Styles & Color Palette --- */
-:root {
+/* --- Themes & Color Palettes --- */
+:root { /* Light Theme (default) */
+    --bg-color: #f0f2f5;
+    --surface-color: #ffffff;
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --text-color: #1c1e21;
+    --subtle-text-color: #606770;
+    --border-color: #dddfe2;
+    --input-bg-color: #f5f6f7;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme {
     --bg-color: #121212;
     --surface-color: #1e1e1e;
     --primary-color: #3b82f6;
@@ -7,11 +19,14 @@
     --text-color: #e0e0e0;
     --subtle-text-color: #a0a0a0;
     --border-color: #333;
+    --input-bg-color: #2c2c2c;
+    --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
+/* --- Global Styles --- */
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, var(--bg-color) 100%);
+    background: var(--bg-color);
     color: var(--text-color);
     display: flex;
     justify-content: center;
@@ -20,7 +35,34 @@ body {
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
 }
+
+/* --- Theme Switcher Button --- */
+#theme-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+#theme-switcher svg {
+    fill: var(--text-color);
+    transition: fill 0.3s;
+}
+.moon-icon { display: none; }
+.dark-theme .moon-icon { display: block; }
+.dark-theme .sun-icon { display: none; }
+
 
 /* --- Main Container Styling --- */
 .container {
@@ -29,52 +71,47 @@ body {
     background-color: var(--surface-color);
     padding: 40px;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px var(--shadow-color);
     text-align: center;
     border: 1px solid var(--border-color);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
-/* --- Branding & Typography --- */
+/* --- Your existing styles below (with minor updates to use new CSS variables) --- */
+
 .logo {
     width: 120px;
     height: auto;
     margin-bottom: 20px;
 }
-
 h1 {
-    color: #ffffff;
+    color: var(--text-color);
     margin-top: 0;
 }
-
 p {
     color: var(--subtle-text-color);
 }
-
-/* --- Input Area Styling --- */
 .input-area {
     margin: 30px 0;
 }
-
 textarea {
     width: 100%;
     padding: 14px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    background-color: #2c2c2c;
+    background-color: var(--input-bg-color);
     color: var(--text-color);
     font-size: 16px;
     font-family: 'Poppins', sans-serif;
     resize: vertical;
     box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
 }
-
 textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
-
 button {
     background-color: var(--primary-color);
     color: white;
@@ -88,19 +125,15 @@ button {
     margin-top: 15px;
     transition: background-color 0.3s, transform 0.2s;
 }
-
 button:hover {
     background-color: var(--primary-hover-color);
     transform: translateY(-2px);
 }
-
 button:disabled {
-    background-color: #294c8b;
+    background-color: color-mix(in srgb, var(--primary-color) 50%, var(--surface-color));
     cursor: not-allowed;
     transform: none;
 }
-
-/* --- Result & Loader Styling --- */
 #result-area {
     margin-top: 30px;
     min-height: 300px;
@@ -112,28 +145,23 @@ button:disabled {
     padding: 10px;
     transition: border-color 0.3s;
 }
-
 #result-image {
     max-width: 100%;
     max-height: 512px;
     border-radius: 8px;
-    display: none; /* Hidden by default */
+    display: none;
 }
-
 .loading-spinner {
-    border: 6px solid #333;
+    border: 6px solid var(--border-color);
     border-top: 6px solid var(--primary-color);
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 1s linear infinite;
 }
-
 .hidden {
     display: none;
 }
-
-/* --- Footer Link Styling (Updated for multiple links) --- */
 .footer-links {
     margin-top: 40px;
     display: flex;
@@ -141,7 +169,6 @@ button:disabled {
     justify-content: center;
     gap: 24px;
 }
-
 .footer-link-item {
     display: flex;
     align-items: center;
@@ -151,21 +178,16 @@ button:disabled {
     font-size: 14px;
     transition: color 0.3s;
 }
-
 .footer-link-item svg {
     fill: var(--subtle-text-color);
     transition: fill 0.3s;
 }
-
 .footer-link-item:hover {
     color: var(--primary-color);
 }
-
 .footer-link-item:hover svg {
     fill: var(--primary-color);
 }
-
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
