@@ -86,14 +86,78 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Image Generation ---
-    generateImgBtn.addEventListener("click", async () => { /* ... existing image logic ... */ });
+    generateImgBtn.addEventListener("click", async () => {
+        const prompt = promptInput.value;
+        if (!prompt) {
+            alert("Please enter a prompt!");
+            return;
+        }
+        setLoading('img', true);
+        try {
+            const response = await fetch(`${BACKEND_URL}/generate-image`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'An unknown error occurred.' }));
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            resultImage.src = `data:image/png;base64,${data.image_b64}`;
+            resultImage.style.display = "block";
+        } catch (error) {
+            console.error("Error generating image:", error);
+            alert(`Failed to generate image. Error: ${error.message}`);
+        } finally {
+            setLoading('img', false);
+        }
+    });
 
     // --- Video Generation ---
     imageUpload.addEventListener('change', () => {
         uploadFilename.textContent = imageUpload.files.length > 0 ? imageUpload.files[0].name : 'Choose an image...';
     });
-    generateVidBtn.addEventListener('click', async () => { /* ... existing video logic ... */ });
+    generateVidBtn.addEventListener('click', async () => {
+        if (imageUpload.files.length === 0) {
+            alert('Please choose an image file first.');
+            return;
+        }
+        setLoading('vid', true);
+        const formData = new FormData();
+        formData.append('image', imageUpload.files[0]);
+        try {
+            const response = await fetch(`${BACKEND_URL}/generate-video`, {
+                method: 'POST',
+                body: formData,
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'An unknown error occurred.' }));
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            resultVideo.src = `data:video/mp4;base64,${data.video_b64}`;
+            resultVideo.style.display = 'block';
+        } catch (error) {
+            console.error("Error generating video:", error);
+            alert(`Failed to generate video. Error: ${error.message}`);
+        } finally {
+            setLoading('vid', false);
+        }
+    });
 
     // --- Helper Function ---
-    function setLoading(type, isLoading) { /* ... existing setLoading logic ... */ }
+    function setLoading(type, isLoading) {
+        const btn = type === 'img' ? generateImgBtn : generateVidBtn;
+        const spinner = type === 'img' ? loadingSpinnerImg : loadingSpinnerVid;
+        const resultEl = type === 'img' ? resultImage : resultVideo;
+
+        btn.disabled = isLoading;
+        if (isLoading) {
+            spinner.classList.remove("hidden");
+            resultEl.style.display = "none";
+        } else {
+            spinner.classList.add("hidden");
+        }
+    }
 });
