@@ -133,34 +133,38 @@ button:disabled {
     display: none;
 }
 
-/* --- Footer Link Styling --- */
-.footer-link {
+/* --- Footer Link Styling (Updated for multiple links) --- */
+.footer-links {
     margin-top: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 24px;
 }
 
-.footer-link a {
+.footer-link-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: var(--subtle-text-color);
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s;
 }
 
-.footer-link svg {
+.footer-link-item svg {
     fill: var(--subtle-text-color);
     transition: fill 0.3s;
 }
 
-.footer-link:hover a {
+.footer-link-item:hover {
     color: var(--primary-color);
 }
 
-.footer-link:hover svg {
+.footer-link-item:hover svg {
     fill: var(--primary-color);
 }
+
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
