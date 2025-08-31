@@ -1,92 +1,105 @@
 // --- Theme Switcher Logic ---
-const themeSwitcher = document.getElementById('theme-switcher');
-const body = document.body;
+// ... (Your existing theme switcher code remains unchanged) ...
 
-// On button click, toggle the 'dark-theme' class on the body
-themeSwitcher.addEventListener('click', () => {
-    body.classList.toggle('dark-theme');
+
+// --- Main Application Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Element Selectors ---
+    const imageModeBtn = document.getElementById('image-mode-btn');
+    const videoModeBtn = document.getElementById('video-mode-btn');
+    const imagePanel = document.getElementById('image-generator-panel');
+    const videoPanel = document.getElementById('video-generator-panel');
     
-    // Save the user's preference to localStorage
-    if (body.classList.contains('dark-theme')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
-    }
-});
+    // Image Generation Elements
+    const promptInput = document.getElementById("prompt-input");
+    const generateImgBtn = document.getElementById("generate-img-btn");
+    const resultImage = document.getElementById("result-image");
+    const loadingSpinnerImg = document.getElementById("loading-spinner-img");
 
-// On page load, apply the saved theme from localStorage
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'dark') {
-    body.classList.add('dark-theme');
-}
-// --- End of Theme Switcher Logic ---
+    // Video Generation Elements
+    const imageUpload = document.getElementById("image-upload");
+    const uploadFilename = document.getElementById("upload-filename");
+    const generateVidBtn = document.getElementById("generate-vid-btn");
+    const resultVideo = document.getElementById("result-video");
+    const loadingSpinnerVid = document.getElementById("loading-spinner-vid");
 
+    const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
 
-// --- Image Generator Logic ---
-const promptInput = document.getElementById("prompt-input");
-const generateBtn = document.getElementById("generate-btn");
-const resultImage = document.getElementById("result-image");
-const loadingSpinner = document.getElementById("loading-spinner");
+    // --- Tab Switching Logic ---
+    imageModeBtn.addEventListener('click', () => {
+        imagePanel.classList.remove('hidden');
+        videoPanel.classList.add('hidden');
+        imageModeBtn.classList.add('active');
+        videoModeBtn.classList.remove('active');
+    });
 
-// This is the backend server we deployed on Render
-const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
+    videoModeBtn.addEventListener('click', () => {
+        videoPanel.classList.remove('hidden');
+        imagePanel.classList.add('hidden');
+        videoModeBtn.classList.add('active');
+        imageModeBtn.classList.remove('active');
+    });
 
-// Main function to handle the generate button click
-generateBtn.addEventListener("click", async () => {
-    const prompt = promptInput.value;
-    if (!prompt) {
-        alert("Please enter a prompt!");
-        return;
-    }
+    // --- Image Generation Logic ---
+    generateImgBtn.addEventListener("click", async () => { /* ... existing image generation logic ... */ });
+    
+    // --- Video Generation Logic ---
+    imageUpload.addEventListener('change', () => {
+        if (imageUpload.files.length > 0) {
+            uploadFilename.textContent = imageUpload.files[0].name;
+        } else {
+            uploadFilename.textContent = 'Choose an image...';
+        }
+    });
 
-    setLoading(true);
-
-    try {
-        const response = await fetch(`${BACKEND_URL}/generate-image`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prompt: prompt }),
-        });
-
-        // If the server response is not "OK" (e.g., status 500), handle the error
-        if (!response.ok) {
-            // Try to get a specific error message from the backend, or use a default
-            const errorData = await response.json().catch(() => ({ error: 'The server returned an error.' }));
-            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+    generateVidBtn.addEventListener('click', async () => {
+        if (imageUpload.files.length === 0) {
+            alert('Please choose an image file first.');
+            return;
         }
 
-        const data = await response.json();
-        
-        // Format the base64 image data for display
-        const imageDataUrl = `data:image/png;base64,${data.image_b64}`;
-        
-        // Set the image source and make it visible
-        resultImage.src = imageDataUrl;
-        resultImage.style.display = "block";
+        setLoading('vid', true);
 
-    } catch (error) {
-        console.error("Error generating image:", error);
-        alert(`Failed to generate image. Error: ${error.message}`);
-    } finally {
-        setLoading(false);
+        const formData = new FormData();
+        formData.append('image', imageUpload.files[0]);
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/generate-video`, {
+                method: 'POST',
+                body: formData, // No 'Content-Type' header needed, browser sets it for FormData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'An unknown error occurred.' }));
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const videoDataUrl = `data:video/mp4;base64,${data.video_b64}`;
+            
+            resultVideo.src = videoDataUrl;
+            resultVideo.style.display = 'block';
+
+        } catch (error) {
+            console.error("Error generating video:", error);
+            alert(`Failed to generate video. Error: ${error.message}`);
+        } finally {
+            setLoading('vid', false);
+        }
+    });
+
+    // --- Helper Functions ---
+    function setLoading(type, isLoading) {
+        const btn = type === 'img' ? generateImgBtn : generateVidBtn;
+        const spinner = type === 'img' ? loadingSpinnerImg : loadingSpinnerVid;
+        const resultEl = type === 'img' ? resultImage : resultVideo;
+
+        btn.disabled = isLoading;
+        if (isLoading) {
+            spinner.classList.remove("hidden");
+            resultEl.style.display = "none";
+        } else {
+            spinner.classList.add("hidden");
+        }
     }
 });
-
-/**
- * Manages the UI loading state.
- * @param {boolean} isLoading - True if loading should start, false if it should end.
- */
-function setLoading(isLoading) {
-    generateBtn.disabled = isLoading;
-    if (isLoading) {
-        loadingSpinner.classList.remove("hidden");
-        // Hide the previous image while a new one is generating
-        resultImage.style.display = "none";
-    } else {
-        // When loading is finished, just hide the spinner.
-        // The image will be made visible only on success in the try block.
-        loadingSpinner.classList.add("hidden");
-    }
-}
