@@ -16,8 +16,8 @@ CORS(app)
 # --- API Configuration ---
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 IMAGE_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
-VIDEO_API_URL_START = "https://api.stability.ai/v1/generation/image-to-video"
-VIDEO_API_URL_RESULT = "https://api.stability.ai/v1/generation/image-to-video/result"
+VIDEO_API_URL_START = "https://api.stability.ai/v2beta/image-to-video"
+VIDEO_API_URL_RESULT = "https://api.stability.ai/v2beta/image-to-video/result"
 
 
 # --- IMAGE GENERATION ENDPOINT (Existing Code) ---
