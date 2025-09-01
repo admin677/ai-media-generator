@@ -6,10 +6,7 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
 
-# Load environment variables from .env file
 load_dotenv()
-
-# Initialize the Flask app and enable CORS
 app = Flask(__name__)
 CORS(app)
 
@@ -21,7 +18,6 @@ VIDEO_API_URL_RESULT = "https://api.stability.ai/v2beta/image-to-video/result"
 UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conservative"
 
 
-# --- IMAGE GENERATION ENDPOINT ---
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
     json_data = request.get_json()
@@ -45,7 +41,6 @@ def generate_image():
         return jsonify({'error': 'Failed to generate image from API'}), 500
 
 
-# --- VIDEO GENERATION ENDPOINT ---
 @app.route('/generate-video', methods=['POST'])
 def generate_video():
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
@@ -88,14 +83,13 @@ def generate_video():
         return jsonify({'error': f"An error occurred: {e}"}), 500
 
 
-# --- IMAGE UPSCALE ENDPOINT (with Debugging) ---
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
-    # --- START DEBUGGING ---
-    print("--- New /upscale-image request received ---")
-    print(f"Request Form data: {request.form.to_dict()}")
-    print(f"Request Files data: {request.files.to_dict()}")
-    print("-----------------------------------------")
+    # --- DEBUGGING CODE (Commented out for normal use) ---
+    # print("--- New /upscale-image request received ---")
+    # print(f"Request Form data: {request.form.to_dict()}")
+    # print(f"Request Files data: {request.files.to_dict()}")
+    # print("-----------------------------------------")
     # --- END DEBUGGING ---
 
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
