@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upscaler - My AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/"><img src="logo.png" alt="Growth Gram AI Logo" class="logo"></a>
+        
+        <h1>AI Image Upscaler</h1>
+        <p>Upload a low-resolution image and describe it to add detail.</p>
+        
+        <div class="input-area">
+            <label for="image-upload" class="upload-label">
+                <span id="upload-filename">Choose an image to upscale...</span>
+            </label>
+            <input type="file" id="image-upload" accept="image/*">
+            <textarea id="prompt-input" rows="2" placeholder="Describe the image (e.g., photo of a giant chicken)"></textarea>
+            <button id="upscale-btn">Upscale Image</button>
+        </div>
+        
+        <div id="result-area" class="result-area">
+            <div id="loading-spinner" class="loading-spinner hidden"></div>
+            <img id="result-image" src="" alt="Upscaled AI Image">
+        </div>
+        
+        <div class="footer-links">
+            <a href="/" class="footer-link-item"><span>&larr; Back to Generator</span></a>
+        </div>
+    </div>
+    
+    <script src="upscaler.js"></script>
+</body>
+</html>
