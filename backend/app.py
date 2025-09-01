@@ -28,6 +28,7 @@ def generate_image():
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
+    
     print(f"Generating image for prompt: {prompt}")
     try:
         response = requests.post(
@@ -40,7 +41,7 @@ def generate_image():
         image_b64 = data["artifacts"][0]["base64"]
         return jsonify({'image_b64': image_b64})
     except requests.exceptions.RequestException as e:
-        print(f"Error calling Stability AI API: {e}")
+        print(f"Error calling Stability AI API for image generation: {e}")
         return jsonify({'error': 'Failed to generate image from API'}), 500
 
 
@@ -49,6 +50,7 @@ def generate_image():
 def generate_video():
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
+    
     image_file = request.files['image']
     print(f"Received image file for video generation: {image_file.filename}")
     try:
@@ -86,9 +88,16 @@ def generate_video():
         return jsonify({'error': f"An error occurred: {e}"}), 500
 
 
-# --- IMAGE UPSCALE ENDPOINT (New Code) ---
+# --- IMAGE UPSCALE ENDPOINT (with Debugging) ---
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
+    # --- START DEBUGGING ---
+    print("--- New /upscale-image request received ---")
+    print(f"Request Form data: {request.form.to_dict()}")
+    print(f"Request Files data: {request.files.to_dict()}")
+    print("-----------------------------------------")
+    # --- END DEBUGGING ---
+
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400
