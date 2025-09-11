@@ -28,11 +28,6 @@
             <a href="#contact" class="cta-button">Get in Touch</a>
         </section>
 
-        <section id="about" class="about-us fade-up">
-             <h2>About Growth Gram</h2>
-             <p style="text-align: center; max-width: 800px; margin: 0 auto;">We are a dynamic team of strategists, marketers, and AI specialists dedicated to helping businesses navigate the complexities of the modern market. Our mission is to deliver measurable results and foster sustainable growth through innovative, data-driven strategies.</p>
-        </section>
-
         <section id="services" class="services fade-up">
             <h2>Our Core Services</h2>
             <div class="section-grid">
@@ -54,9 +49,16 @@
         <section id="contact" class="contact-form fade-up">
             <h2>Contact Us</h2>
             <p>Let's discuss how we can help your business grow. Fill out the form below to get started.</p>
-            <form>
+            
+            <form name="contact" method="POST" data-netlify="true">
                 <input type="text" name="name" placeholder="Your Name" required>
                 <input type="email" name="email" placeholder="Your Email" required>
+                <select name="service" required>
+                    <option value="" disabled selected>What service are you interested in?</option>
+                    <option value="Business Strategy">Business Strategy</option>
+                    <option value="Marketing Automation">Marketing Automation</option>
+                    <option value="AI Integration">AI Integration</option>
+                </select>
                 <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
                 <button type="submit" class="submit-btn">Send Message</button>
             </form>

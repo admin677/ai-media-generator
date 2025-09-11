@@ -150,7 +150,9 @@ h2 {
     margin: 0 auto;
     gap: 20px;
 }
-.contact-form input, .contact-form textarea {
+.contact-form input, 
+.contact-form textarea,
+.contact-form select {
     padding: 15px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -158,8 +160,12 @@ h2 {
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
     transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
-.contact-form input:focus, .contact-form textarea:focus {
+.contact-form input:focus, 
+.contact-form textarea:focus,
+.contact-form select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
@@ -185,7 +191,6 @@ h2 {
 .main-footer {
     text-align: center;
     padding: 40px 20px;
-    margin-top: 40px;
     background-color: var(--dark-blue);
     color: rgba(255,255,255,0.7);
 }
