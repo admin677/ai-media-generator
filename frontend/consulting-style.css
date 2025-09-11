@@ -34,8 +34,8 @@ body {
 }
 
 .logo {
-    width: 100px;
-    height: auto;
+    height: 50px;
+    width: auto;
 }
 
 .ai-generator-btn {
@@ -166,4 +166,19 @@ h2 {
     padding: 20px;
     margin-top: 40px;
     color: var(--subtle-text-color);
+}
+
+.main-footer .footer-links {
+    margin-bottom: 15px;
+}
+
+.main-footer .footer-links a {
+    color: var(--subtle-text-color);
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s;
+}
+
+.main-footer .footer-links a:hover {
+    color: var(--primary-color);
 }
