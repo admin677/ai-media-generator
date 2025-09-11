@@ -24,8 +24,8 @@
         <ul>
             <li><a href="upscaler.html">Image Upscaler</a></li>
             <li><a href="#" id="history-link">History</a></li>
-            <li><a href="#" id="privacy-link">Privacy</a></li>
-            <li><a href="#" id="terms-link">Terms and Conditions</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+            <li><a href="terms.html">Terms and Conditions</a></li>
             <li><a href="#" id="legal-link">Legal Notice</a></li>
             <li><a href="#" id="login-link">Log in</a></li>
             <li><a href="#" id="imprint-link">Imprint</a></li>
@@ -44,6 +44,7 @@
             <button id="image-mode-btn" class="tab-button active">Image</button>
             <button id="video-mode-btn" class="tab-button">Video</button>
         </div>
+
         <div id="image-generator-panel" class="generator-panel">
             <h1>AI Image Generator</h1>
             <p>Describe the image you want to create.</p>
@@ -56,6 +57,7 @@
                 <img id="result-image" src="" alt="Generated AI Image">
             </div>
         </div>
+
         <div id="video-generator-panel" class="generator-panel hidden">
             <h1>AI Video Generator</h1>
             <p>Upload an image to animate into a short video.</p>
@@ -71,6 +73,7 @@
                 <video id="result-video" controls></video>
             </div>
         </div>
+
         <div class="footer-links">
             <a href="http://www.youtube.com/@thegrowthgram" target="_blank" rel="noopener noreferrer" class="footer-link-item">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M12.04,18.77...L9.78,10.04z"/></svg>
@@ -80,6 +83,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path d="M12,2.163c3.204...S17.746,5.595,16.965,5.595z"/></svg>
                 <span>Instagram</span>
             </a>
+            <a href="privacy.html" class="footer-link-item">Privacy</a>
+            <a href="terms.html" class="footer-link-item">Terms</a>
         </div>
     </div>
     
@@ -87,9 +92,19 @@
         <div class="modal-content">
             <button id="close-modal-btn" class="close-button">&times;</button>
             <h2>Imprint</h2>
-            <p><strong>Owner:</strong> [Qazi Hussain]</p>
-            <p><strong>Email:</strong> [admin@thegrowthgram.com]</p>
-            <p><strong>Phone:</strong> [+ 91 888 798 0991]</p>
+            <p><strong>Owner:</strong> [Your Name Here]</p>
+            <p><strong>Email:</strong> [Your Email Here]</p>
+            <p><strong>Phone:</strong> [Your Phone Here]</p>
+        </div>
+    </div>
+    
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-history-btn" class="close-button">&times;</button>
+            <h2>Generation History</h2>
+            <div id="history-grid">
+                <p id="no-history-message">You have no saved history yet.</p>
+            </div>
         </div>
     </div>
     
