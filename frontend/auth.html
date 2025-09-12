@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up - My AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="auth-style.css"> </head>
+<body>
+    <div class="form-container">
+        <a href="index.html"><img src="logo.png" alt="Growth Gram AI Logo" class="logo"></a>
+        <div id="signup-form-container">
+            <h2>Create an Account</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="Email Address" required>
+                <input type="password" id="signup-password" placeholder="Password (min. 6 characters)" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="show-signin">Sign In</a></p>
+        </div>
+        <div id="signin-form-container" style="display: none;">
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <input type="email" id="signin-email" placeholder="Email Address" required>
+                <input type="password" id="signin-password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+        </div>
+        <p id="error-message" class="error"></p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyI0gcmkeIvVz5EWqYC2uKi_9fY-Sdjjk",
+            authDomain: "growthgramai.firebaseapp.com",
+            projectId: "growthgramai",
+            storageBucket: "growthgramai.appspot.com",
+            messagingSenderId: "719150875903",
+            appId: "1:719150875903:web:863436f45134c2dc50b8ca",
+            measurementId: "G-6DTPC1Q6EM"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="auth.js"></script> </body>
+</html>
