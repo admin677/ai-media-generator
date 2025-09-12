@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             // User is signed in
             console.log("User is signed in:", user.email);
-            userInfo.textContent = `Welcome, ${user.email}`;
+            userInfo.textContent = user.email; // Shorter text
             userInfo.classList.remove('hidden');
             loginBtn.classList.add('hidden');
             signoutBtn.classList.remove('hidden');
@@ -28,12 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         auth.signOut().then(() => {
             // Sign-out successful.
-            window.location.href = 'index.html'; // Optional: redirect to home on signout
         }).catch((error) => {
             console.error('Sign out error', error);
         });
     });
-
 
     // --- Existing Animation Logic ---
     const header = document.querySelector('.main-header');

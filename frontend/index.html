@@ -25,42 +25,6 @@
     </header>
 
     <main>
-        </main>
-
-    <footer class="main-footer">
-        </footer>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCyI0gcmkeIvVz5EWqYC2uKi_9fY-Sdjjk",
-            authDomain: "growthgramai.firebaseapp.com",
-            projectId: "growthgramai",
-            storageBucket: "growthgramai.appspot.com",
-            messagingSenderId: "719150875903",
-            appId: "1:719150875903:web:863436f45134c2dc50b8ca",
-            measurementId: "G-6DTPC1Q6EM"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script>
-
-    <script src="consulting-script.js"></script>
-</body>
-    <header class="main-header">
-        <div class="header-content">
-            <a href="index.html">
-                <img src="logo.png" alt="Growth Gram Logo" class="logo">
-            </a>
-            <nav>
-                <a href="generator.html" class="ai-generator-btn">AI Generators</a>
-            </nav>
-        </div>
-    </header>
-
-    <main>
         <section class="hero">
             <h1>Propel Your Business to New Heights</h1>
             <p>Strategic consulting and AI-powered solutions to unlock your growth potential.</p>
@@ -88,8 +52,7 @@
         <section id="contact" class="contact-form fade-up">
             <h2>Contact Us</h2>
             <p>Let's discuss how we can help your business grow. Fill out the form below to get started.</p>
-            
-            <form action="https://formspree.io/f/xqadjlaz" method="POST">
+            <form name="contact" method="POST" data-netlify="true">
                 <input type="text" name="name" placeholder="Your Name" required>
                 <input type="email" name="email" placeholder="Your Email" required>
                 <select name="service" required>
@@ -113,6 +76,20 @@
         <p>&copy; 2025 The Growth Gram. All Rights Reserved.</p>
     </footer>
     
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyI0gcmkeIvVz5EWqYC2uKi_9fY-Sdjjk",
+            authDomain: "growthgramai.firebaseapp.com",
+            projectId: "growthgramai",
+            storageBucket: "growthgramai.appspot.com",
+            messagingSenderId: "719150875903",
+            appId: "1:719150875903:web:863436f45134c2dc50b8ca",
+            measurementId: "G-6DTPC1Q6EM"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
     <script src="consulting-script.js"></script>
 </body>
 </html>
