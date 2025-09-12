@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6DTPC1Q6EM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-6DTPC1Q6EM');
-    </script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Growth Gram - Business Consulting</title>
@@ -24,11 +15,16 @@
             <a href="index.html">
                 <img src="logo.png" alt="Growth Gram Logo" class="logo">
             </a>
+            <nav class="main-nav">
+                <a href="index.html">Homepage</a>
+                <a href="generator.html">AI Generators</a>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Our Services</a>
+            </nav>
             <nav>
                 <span id="user-info" class="user-info hidden"></span>
                 <a href="auth.html" id="login-btn" class="auth-btn">Log In</a>
                 <a href="#" id="signout-btn" class="auth-btn hidden">Sign Out</a>
-                <a href="generator.html" class="ai-generator-btn">AI Generators</a>
             </nav>
         </div>
     </header>
@@ -39,6 +35,7 @@
             <p>Strategic consulting and AI-powered solutions to unlock your growth potential.</p>
             <a href="#contact" class="cta-button">Get in Touch</a>
         </section>
+
         <section id="services" class="services fade-up">
             <h2>Our Core Services</h2>
             <div class="section-grid">
@@ -56,10 +53,11 @@
                 </div>
             </div>
         </section>
+
         <section id="contact" class="contact-form fade-up">
             <h2>Contact Us</h2>
             <p>Let's discuss how we can help your business grow. Fill out the form below to get started.</p>
-            <form name="contact" method="POST" data-netlify="true">
+            <form action="https://formspree.io/f/your_unique_code" method="POST">
                 <input type="text" name="name" placeholder="Your Name" required>
                 <input type="email" name="email" placeholder="Your Email" required>
                 <select name="service" required>
