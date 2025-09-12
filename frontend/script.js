@@ -16,13 +16,18 @@ if (savedTheme === 'dark') {
 
 // --- Main Application Logic ---
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Element Selectors ---
+    // NOTE: All variables and event listeners for the old hamburger menu, side panel, overlay, and modals have been removed.
+    
+    // Selectors for the generator tools
     const imageModeBtn = document.getElementById('image-mode-btn');
     const videoModeBtn = document.getElementById('video-mode-btn');
     const imagePanel = document.getElementById('image-generator-panel');
     const videoPanel = document.getElementById('video-generator-panel');
-    // ... all other selectors for generators and history ...
-    
-    // --- Logic for tabs, image/video generation, and history ---
-    // ... This logic remains the same as the last complete version ...
+    // ... all other selectors for image/video generation and history ...
+
+    // --- Tab Switching Logic ---
+    // ... same as before ...
+
+    // --- History, Image, and Video Generation Logic ---
+    // ... all of this logic remains the same ...
 });
