@@ -126,4 +126,57 @@ body {
     margin-top: 0;
 }
 
-/* ... All other styles for hero, services, contact, footer, etc. ... */
+/* --- Main Content Sections --- */
+main {
+    padding-top: 60px; /* Add space for the sticky header */
+}
+
+.hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: white;
+    background-image: linear-gradient(rgba(0, 34, 68, 0.7), rgba(0, 34, 68, 0.7)), url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+    background-size: cover;
+    background-position: center;
+}
+.hero h1 { font-size: 3.5rem; margin-bottom: 15px; font-weight: 700; color: white; border: none; }
+.hero p { font-size: 1.25rem; max-width: 700px; margin-bottom: 40px; }
+
+.cta-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, transform 0.3s;
+}
+.cta-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
+
+.services, .contact-form { padding: 80px 20px; }
+h2 { font-size: 2.5rem; color: var(--heading-color); text-align: center; margin-bottom: 60px; }
+
+.section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
+.card { background-color: var(--surface-color); padding: 40px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); border: 1px solid var(--border-color); transition: transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform: translateY(-10px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+.card h3 { color: var(--heading-color); margin-top: 0; }
+
+.contact-form form { display: flex; flex-direction: column; max-width: 700px; margin: 0 auto; gap: 20px; }
+.contact-form input, .contact-form textarea, .contact-form select { padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 16px; font-family: 'Poppins', sans-serif; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; background-color: var(--bg-color); color: var(--text-color); }
+.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25); }
+.submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s, transform 0.3s; align-self: center; }
+.submit-btn:hover { background-color: #0b5ed7; transform: scale(1.05); }
+
+.main-footer { text-align: center; padding: 40px 20px; background-color: var(--dark-blue); color: rgba(255,255,255,0.7); }
+.main-footer .footer-links { margin-bottom: 15px; }
+.main-footer .footer-links a { color: white; text-decoration: none; margin: 0 10px; transition: color 0.3s; }
+.main-footer .footer-links a:hover { text-decoration: underline; }
+
+.fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }s
