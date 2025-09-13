@@ -20,6 +20,7 @@ UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conserva
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
+    # No longer checks for auth token
     json_data = request.get_json()
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
@@ -43,6 +44,7 @@ def generate_image():
 
 @app.route('/generate-video', methods=['POST'])
 def generate_video():
+    # No longer checks for auth token
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     
@@ -85,13 +87,7 @@ def generate_video():
 
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
-    # --- DEBUGGING CODE (Commented out for normal use) ---
-    # print("--- New /upscale-image request received ---")
-    # print(f"Request Form data: {request.form.to_dict()}")
-    # print(f"Request Files data: {request.files.to_dict()}")
-    # print("-----------------------------------------")
-    # --- END DEBUGGING ---
-
+    # No longer checks for auth token
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400

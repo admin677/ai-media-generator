@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const auth = firebase.auth();
     const imageUpload = document.getElementById("image-upload");
     const uploadFilename = document.getElementById("upload-filename");
     const promptInput = document.getElementById("prompt-input");
@@ -17,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     upscaleBtn.addEventListener('click', async () => {
+        if (!auth.currentUser) {
+            alert("Please log in to upscale images.");
+            window.location.href = 'auth.html';
+            return;
+        }
         if (imageUpload.files.length === 0) {
             alert('Please choose an image file first.');
             return;
