@@ -8,21 +8,26 @@ from flask_cors import CORS
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+
+# --- CORS CONFIGURATION ---
+origins = [
+    "https://growthgramai.com",
+    "https://growthgramai.netlify.app",
+    "http://127.0.0.1:5500"
+]
+CORS(app, resources={r"/*": {"origins": origins}})
 
 # --- API Configuration ---
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
-PEXELS_API_KEY = os.getenv("PEXELS_API_KEY") # New Pexels Key
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 
-VIDEO_API_URL_START = "https://api.stability.ai/v2beta/image-to-video"
-VIDEO_API_URL_RESULT = "https://api.stability.ai/v2beta/image-to-video/result"
+PEXELS_PHOTO_SEARCH_URL = "https://api.pexels.com/v1/search"
+PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/v1/videos/search"
 UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conservative"
-PEXELS_SEARCH_URL = "https://api.pexels.com/v1/search" # New Pexels URL
 
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
-    # This function now searches Pexels for a free stock photo
     json_data = request.get_json()
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
@@ -31,7 +36,7 @@ def generate_image():
     print(f"Searching for image with prompt: {prompt}")
     try:
         response = requests.get(
-            PEXELS_SEARCH_URL,
+            PEXELS_PHOTO_SEARCH_URL,
             headers={"Authorization": PEXELS_API_KEY},
             params={"query": prompt, "per_page": 1, "orientation": "landscape"}
         )
@@ -39,13 +44,10 @@ def generate_image():
         data = response.json()
         
         if data['photos']:
-            # If photos are found, return the URL of the first one
             image_url = data['photos'][0]['src']['large2x']
             return jsonify({'image_url': image_url})
         else:
-            # If no photos are found for the prompt
             return jsonify({'error': 'No images found for that prompt. Try a different search term.'}), 404
-
     except requests.exceptions.RequestException as e:
         print(f"Error calling Pexels API: {e}")
         return jsonify({'error': 'Failed to search for image from API.'}), 500
@@ -53,44 +55,32 @@ def generate_image():
 
 @app.route('/generate-video', methods=['POST'])
 def generate_video():
-    if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
-    if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
-    
-    image_file = request.files['image']
-    print(f"Received image file for video generation: {image_file.filename}")
+    json_data = request.get_json()
+    prompt = json_data.get('prompt')
+    if not prompt: return jsonify({'error': 'Prompt is required'}), 400
+    if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
+
+    print(f"Searching for video with prompt: {prompt}")
     try:
-        print("Starting video generation job...")
-        response = requests.post(
-            VIDEO_API_URL_START,
-            headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "application/json"},
-            files={"image": image_file},
-            data={"seed": 0, "cfg_scale": 2.5, "motion_bucket_id": 40}
+        response = requests.get(
+            PEXELS_VIDEO_SEARCH_URL,
+            headers={"Authorization": PEXELS_API_KEY},
+            params={"query": prompt, "per_page": 1, "orientation": "landscape"}
         )
         response.raise_for_status()
-        job_id = response.json().get('id')
-        print(f"Job started with ID: {job_id}")
+        data = response.json()
 
-        print("Polling for video result...")
-        for _ in range(30):
-            time.sleep(5)
-            poll_response = requests.get(
-                f"{VIDEO_API_URL_RESULT}/{job_id}",
-                headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "video/mp4"}
-            )
-            if poll_response.status_code == 200:
-                print("Video generation complete.")
-                video_data = poll_response.content
-                video_b64 = base64.b64encode(video_data).decode('utf-8')
-                return jsonify({'video_b64': video_b64})
-            elif poll_response.status_code != 202:
-                error_info = poll_response.text
-                print(f"Polling failed with status {poll_response.status_code}: {error_info}")
-                raise requests.exceptions.RequestException(f"Generation failed: {error_info}")
-            print("Job is still in progress...")
-        return jsonify({'error': 'Video generation timed out after polling.'}), 504
+        if data['videos']:
+            video_files = data['videos'][0]['video_files']
+            video_url = next((vid['link'] for vid in video_files if vid.get('quality') == 'hd'), None)
+            if not video_url:
+                video_url = video_files[0]['link']
+            return jsonify({'video_url': video_url})
+        else:
+            return jsonify({'error': 'No videos found for that prompt. Try a different search term.'}), 404
     except requests.exceptions.RequestException as e:
-        print(f"Error during video generation process: {e}")
-        return jsonify({'error': f"An error occurred: {e}"}), 500
+        print(f"Error calling Pexels Video API: {e}")
+        return jsonify({'error': 'Failed to search for video from API.'}), 500
 
 
 @app.route('/upscale-image', methods=['POST'])
