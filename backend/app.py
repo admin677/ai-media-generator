@@ -38,6 +38,8 @@ def generate_image():
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
     if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
+    
+    print(f"Searching for images with prompt: {prompt}")
     try:
         response = requests.get(
             PEXELS_PHOTO_SEARCH_URL,
@@ -46,6 +48,7 @@ def generate_image():
         )
         response.raise_for_status()
         data = response.json()
+        
         if data['photos']:
             image_urls = [photo['src']['large'] for photo in data['photos']]
             return jsonify({'image_urls': image_urls})
@@ -61,6 +64,8 @@ def generate_video():
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
     if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
+    
+    print(f"Searching for video with prompt: {prompt}")
     try:
         response = requests.get(
             PEXELS_VIDEO_SEARCH_URL,
@@ -69,6 +74,7 @@ def generate_video():
         )
         response.raise_for_status()
         data = response.json()
+
         if data['videos']:
             video_files = data['videos'][0]['video_files']
             video_url = next((vid['link'] for vid in video_files if vid.get('quality') == 'hd'), video_files[0]['link'])
@@ -84,6 +90,8 @@ def upscale_image():
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400
+    
+    print(f"Received image and prompt for upscaling")
     try:
         image_file = request.files['image']
         prompt = request.form['prompt']
@@ -113,17 +121,29 @@ def generate_analysis():
         return jsonify({'error': 'A topic and analysis type are required'}), 400
 
     print(f"Generating {analysis_type} analysis for topic: {topic}")
-    prompt = f"Generate a detailed {analysis_type} analysis for the following topic: {topic}. Return ONLY a raw JSON object (no markdown formatting like ```json). For SWOT, the keys must be lowercase 'strengths', 'weaknesses', 'opportunities', 'threats'. For PESTLE, keys must be lowercase 'political', 'economic', 'social', 'technological', 'legal', 'environmental'. For Porter's Five Forces, keys must be lowercase and use underscores: 'threat_of_new_entrants', 'bargaining_power_of_buyers', 'bargaining_power_of_suppliers', 'threat_of_substitute_products', 'industry_rivalry'. Each key's value must be an array of strings, with each string being a concise bullet point."
+    
+    prompt = f"""
+    Generate a detailed {analysis_type} analysis for the topic: "{topic}".
+    Your response must be a single, raw JSON object with no other text or markdown formatting like ```json.
+
+    Use the following exact keys for the JSON, which must be lowercase and use underscores instead of spaces:
+    - For SWOT: "strengths", "weaknesses", "opportunities", "threats"
+    - For PESTLE: "political", "economic", "social", "technological", "legal", "environmental"
+    - For Porters Five Forces: "threat_of_new_entrants", "bargaining_power_of_buyers", "bargaining_power_of_suppliers", "threat_of_substitute_products", "industry_rivalry"
+
+    The value for each key must be an array of strings, where each string is a concise bullet point.
+    """
 
     try:
-        # UPDATED to the latest model name
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         cleaned_json_string = response.text.strip()
         analysis_data = json.loads(cleaned_json_string)
         return jsonify(analysis_data)
     except Exception as e:
-        return jsonify({'error': f'Failed to generate analysis from AI. Error: {str(e)}'}), 500
+        print(f"Error calling Google AI API: {e}")
+        error_message = f'Failed to generate analysis. The AI may be unable to process this topic. Error: {str(e)}'
+        return jsonify({'error': error_message}), 500
 
 
 if __name__ == '__main__':
