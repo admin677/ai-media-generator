@@ -7,18 +7,32 @@ import google.generativeai as genai
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
+from functools import wraps
+import firebase_admin
+from firebase_admin import credentials, auth
 
 load_dotenv()
 
-if os.getenv("GOOGLE_API_KEY"):
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# --- FIREBASE ADMIN SDK INITIALIZATION ---
+try:
+    service_account_info_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if service_account_info_json:
+        service_account_info = json.loads(service_account_info_json)
+        cred = credentials.Certificate(service_account_info)
+        firebase_admin.initialize_app(cred)
+    else:
+        print("WARNING: Firebase service account key not found. Authentication will fail.")
+except Exception as e:
+    print(f"ERROR: Could not initialize Firebase Admin SDK: {e}")
+
 
 app = Flask(__name__)
 
 # --- CORS CONFIGURATION ---
 origins = [
     "https://growthgramai.com",
-    "https://growthgramai.netlify.app"
+    "https://growthgramai.netlify.app",
+    "http://127.0.0.1:5500" # For local testing
 ]
 CORS(app, resources={r"/*": {"origins": origins}})
 
@@ -26,20 +40,46 @@ CORS(app, resources={r"/*": {"origins": origins}})
 # --- API Configuration ---
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
 
 PEXELS_PHOTO_SEARCH_URL = "https://api.pexels.com/v1/search"
 PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/v1/videos/search"
-UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conservative"
+UPSCALE_API_URL = "https://api.stability.ai/v2/stable-image/upscale/conservative" # Corrected URL
+VIDEO_API_URL_START = "https://api.stability.ai/v2/generation/image-to-video"
+VIDEO_API_URL_RESULT = "https://api.stability.ai/v2/generation/image-to-video/result"
+
+
+# --- AUTHENTICATION DECORATOR ---
+def require_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'Authorization token is missing or invalid.'}), 401
+        
+        id_token = auth_header.split('Bearer ')[1]
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            request.user = decoded_token
+        except Exception as e:
+            print(f"Error verifying token: {e}")
+            return jsonify({'error': 'Invalid or expired token.'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.route('/generate-image', methods=['POST'])
+@require_auth
 def generate_image():
     json_data = request.get_json()
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
     if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
     
-    print(f"Searching for images with prompt: {prompt}")
     try:
         response = requests.get(
             PEXELS_PHOTO_SEARCH_URL,
@@ -48,7 +88,6 @@ def generate_image():
         )
         response.raise_for_status()
         data = response.json()
-        
         if data['photos']:
             image_urls = [photo['src']['large'] for photo in data['photos']]
             return jsonify({'image_urls': image_urls})
@@ -59,39 +98,45 @@ def generate_image():
 
 
 @app.route('/generate-video', methods=['POST'])
+@require_auth
 def generate_video():
-    json_data = request.get_json()
-    prompt = json_data.get('prompt')
-    if not prompt: return jsonify({'error': 'Prompt is required'}), 400
-    if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
+    if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
+    if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     
-    print(f"Searching for video with prompt: {prompt}")
+    image_file = request.files['image']
     try:
-        response = requests.get(
-            PEXELS_VIDEO_SEARCH_URL,
-            headers={"Authorization": PEXELS_API_KEY},
-            params={"query": prompt, "per_page": 1, "orientation": "landscape"}
+        response = requests.post(
+            VIDEO_API_URL_START,
+            headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "application/json"},
+            files={"image": image_file},
+            data={"seed": 0, "cfg_scale": 2.5, "motion_bucket_id": 40}
         )
         response.raise_for_status()
-        data = response.json()
-
-        if data['videos']:
-            video_files = data['videos'][0]['video_files']
-            video_url = next((vid['link'] for vid in video_files if vid.get('quality') == 'hd'), video_files[0]['link'])
-            return jsonify({'video_url': video_url})
-        else:
-            return jsonify({'error': 'No videos found for that prompt.'}), 404
+        job_id = response.json().get('id')
+        for _ in range(30):
+            time.sleep(5)
+            poll_response = requests.get(
+                f"{VIDEO_API_URL_RESULT}/{job_id}",
+                headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "video/mp4"}
+            )
+            if poll_response.status_code == 200:
+                video_data = poll_response.content
+                video_b64 = base64.b64encode(video_data).decode('utf-8')
+                return jsonify({'video_b64': video_b64})
+            elif poll_response.status_code != 202:
+                raise requests.exceptions.RequestException(f"Generation failed: {poll_response.text}")
+        return jsonify({'error': 'Video generation timed out.'}), 504
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': 'Failed to search for video from API.'}), 500
+        return jsonify({'error': f"An error occurred: {e}"}), 500
 
 
 @app.route('/upscale-image', methods=['POST'])
+@require_auth
 def upscale_image():
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400
     
-    print(f"Received image and prompt for upscaling")
     try:
         image_file = request.files['image']
         prompt = request.form['prompt']
@@ -109,41 +154,26 @@ def upscale_image():
         error_details = e.response.text if e.response else "An unknown error occurred"
         return jsonify({'error': f"An error occurred: {error_details}"}), 500
 
-@app.route('/generate-analysis', methods=['POST'])
-def generate_analysis():
-    if not os.getenv("GOOGLE_API_KEY"):
-        return jsonify({'error': 'Google AI API key not found'}), 500
 
+@app.route('/generate-analysis', methods=['POST'])
+@require_auth
+def generate_analysis():
+    if not GOOGLE_API_KEY: return jsonify({'error': 'Google AI API key not found'}), 500
     json_data = request.get_json()
     topic = json_data.get('topic')
     analysis_type = json_data.get('analysis_type')
     if not topic or not analysis_type:
         return jsonify({'error': 'A topic and analysis type are required'}), 400
-
-    print(f"Generating {analysis_type} analysis for topic: {topic}")
     
-    prompt = f"""
-    Generate a detailed {analysis_type} analysis for the topic: "{topic}".
-    Your response must be a single, raw JSON object with no other text or markdown formatting like ```json.
-
-    Use the following exact keys for the JSON, which must be lowercase and use underscores instead of spaces:
-    - For SWOT: "strengths", "weaknesses", "opportunities", "threats"
-    - For PESTLE: "political", "economic", "social", "technological", "legal", "environmental"
-    - For Porters Five Forces: "threat_of_new_entrants", "bargaining_power_of_buyers", "bargaining_power_of_suppliers", "threat_of_substitute_products", "industry_rivalry"
-
-    The value for each key must be an array of strings, where each string is a concise bullet point.
-    """
-
+    prompt = f"Generate a detailed {analysis_type} analysis for the topic: \"{topic}\". Return ONLY a raw JSON object."
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
-        cleaned_json_string = response.text.strip()
+        cleaned_json_string = response.text.strip().replace('```json', '').replace('```', '')
         analysis_data = json.loads(cleaned_json_string)
         return jsonify(analysis_data)
     except Exception as e:
-        print(f"Error calling Google AI API: {e}")
-        error_message = f'Failed to generate analysis. The AI may be unable to process this topic. Error: {str(e)}'
-        return jsonify({'error': error_message}), 500
+        return jsonify({'error': f'Failed to generate analysis from AI. Error: {str(e)}'}), 500
 
 
 if __name__ == '__main__':
