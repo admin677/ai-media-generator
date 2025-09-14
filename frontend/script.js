@@ -232,3 +232,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+// --- Theme Switcher Logic ---
+// ... (code is unchanged)
+
+// --- Main Application Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const auth = firebase.auth();
+    // ... (all element selectors are the same)
+
+    // --- Image Generation ---
+    if (generateImgBtn) {
+        generateImgBtn.addEventListener("click", async () => {
+            if (!auth.currentUser) {
+                alert("Please log in to use the generators.");
+                window.location.href = 'auth.html';
+                return;
+            }
+            // ... (rest of the image generation logic is the same, no token is sent)
+        });
+    }
+
+    // --- Video Generation (using Pexels) ---
+    if (generateVidBtn) {
+        generateVidBtn.addEventListener('click', async () => {
+             if (!auth.currentUser) {
+                alert("Please log in to use the generators.");
+                window.location.href = 'auth.html';
+                return;
+            }
+            // ... (rest of the video generation logic is the same, no token is sent)
+        });
+    }
+    
+    // ... (All other logic is the same: tabs, history, etc.)
+});

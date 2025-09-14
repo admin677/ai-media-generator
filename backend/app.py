@@ -175,6 +175,60 @@ def generate_analysis():
     except Exception as e:
         return jsonify({'error': f'Failed to generate analysis from AI. Error: {str(e)}'}), 500
 
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
+
+import os
+import requests
+import base64
+import time
+import json
+import google.generativeai as genai
+from flask import Flask, request, jsonify
+from dotenv import load_dotenv
+from flask_cors import CORS
+
+load_dotenv()
+
+if os.getenv("GOOGLE_API_KEY"):
+    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+app = Flask(__name__)
+
+# --- CORS CONFIGURATION ---
+origins = [
+    "https://growthgramai.com",
+    "https://growthgramai.netlify.app"
+]
+CORS(app, resources={r"/*": {"origins": origins}})
+
+# --- API Configuration ---
+STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+
+PEXELS_PHOTO_SEARCH_URL = "https://api.pexels.com/v1/search"
+PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/v1/videos/search"
+UPSCALE_API_URL = "https://api.stability.ai/v2/stable-image/upscale/conservative"
+
+@app.route('/generate-image', methods=['POST'])
+def generate_image():
+    # ... (function is unchanged from Pexels implementation)
+    pass
+
+@app.route('/generate-video', methods=['POST'])
+def generate_video():
+    # This endpoint is now a placeholder as the frontend uses Pexels
+    return jsonify({'error': 'This video generation method is deprecated.'}), 404
+
+@app.route('/upscale-image', methods=['POST'])
+def upscale_image():
+    # ... (function is unchanged, still requires STABILITY_API_KEY)
+    pass
+
+@app.route('/generate-analysis', methods=['POST'])
+def generate_analysis():
+    # ... (function is unchanged from Gemini implementation)
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
