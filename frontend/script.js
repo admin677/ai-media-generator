@@ -138,3 +138,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+// --- Theme Switcher Logic ---
+// ... (code is unchanged)
+
+// --- Main Application Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const auth = firebase.auth();
+    // ... (all element selectors are the same)
+
+    // --- Image Generation ---
+    if (generateImgBtn) {
+        // ... (code is unchanged from Pexels implementation)
+    }
+
+    // --- Video Generation ---
+    if (generateVidBtn) {
+        imageUpload.addEventListener('change', () => {
+            if(uploadFilename) {
+                uploadFilename.textContent = imageUpload.files.length > 0 ? imageUpload.files[0].name : 'Choose an image...';
+            }
+        });
+        generateVidBtn.addEventListener('click', async () => {
+             if (!auth.currentUser) {
+                alert("Please log in to use the generators.");
+                window.location.href = 'auth.html';
+                return;
+            }
+            if (imageUpload.files.length === 0) { alert('Please choose an image file first.'); return; }
+            setLoading('vid', true);
+            const formData = new FormData();
+            formData.append('image', imageUpload.files[0]);
+            try {
+                const idToken = await auth.currentUser.getIdToken();
+                const response = await fetch(`${BACKEND_URL}/generate-video`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${idToken}` },
+                    body: formData,
+                });
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                resultVideo.src = `data:video/mp4;base64,${data.video_b64}`;
+                resultVideo.style.display = 'block';
+            } catch (error) {
+                console.error("Error generating video:", error);
+                alert(`Failed to generate video. Error: ${error.message}`);
+            } finally {
+                setLoading('vid', false);
+            }
+        });
+    }
+    
+    // ... (All other logic is the same: tabs, history, etc.)
+});

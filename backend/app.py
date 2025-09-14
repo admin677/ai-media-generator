@@ -126,3 +126,83 @@ def generate_analysis():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
+import os
+import requests
+import base64
+import time
+import json
+import google.generativeai as genai
+from flask import Flask, request, jsonify
+from dotenv import load_dotenv
+from flask_cors import CORS
+
+load_dotenv()
+
+if os.getenv("GOOGLE_API_KEY"):
+    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+app = Flask(__name__)
+
+# --- CORS CONFIGURATION ---
+origins = [
+    "https://growthgramai.com",
+    "https://growthgramai.netlify.app"
+]
+CORS(app, resources={r"/*": {"origins": origins}})
+
+# --- API Configuration ---
+STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+
+PEXELS_PHOTO_SEARCH_URL = "https://api.pexels.com/v1/search"
+PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/v1/videos/search"
+UPSCALE_API_URL = "https://api.stability.ai/v2/stable-image/upscale/conservative"
+VIDEO_API_URL_START = "https://api.stability.ai/v2/generation/image-to-video"
+VIDEO_API_URL_RESULT = "https://api.stability.ai/v2/generation/image-to-video/result"
+
+@app.route('/generate-image', methods=['POST'])
+def generate_image():
+    # ... (function is unchanged from Pexels implementation)
+    pass
+
+@app.route('/generate-video', methods=['POST'])
+def generate_video():
+    if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
+    if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
+    image_file = request.files['image']
+    try:
+        response = requests.post(
+            VIDEO_API_URL_START,
+            headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "application/json"},
+            files={"image": image_file}, data={"seed": 0}
+        )
+        response.raise_for_status()
+        job_id = response.json().get('id')
+        for _ in range(30):
+            time.sleep(5)
+            poll_response = requests.get(
+                f"{VIDEO_API_URL_RESULT}/{job_id}",
+                headers={"Authorization": f"Bearer {STABILITY_API_KEY}", "Accept": "video/mp4"}
+            )
+            if poll_response.status_code == 200:
+                video_data = poll_response.content
+                video_b64 = base64.b64encode(video_data).decode('utf-8')
+                return jsonify({'video_b64': video_b64})
+            elif poll_response.status_code != 202:
+                raise requests.exceptions.RequestException(f"Generation failed: {poll_response.text}")
+        return jsonify({'error': 'Video generation timed out.'}), 504
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f"An error occurred: {e}"}), 500
+
+@app.route('/upscale-image', methods=['POST'])
+def upscale_image():
+    # ... (function is unchanged, still requires STABILITY_API_KEY)
+    pass
+
+@app.route('/generate-analysis', methods=['POST'])
+def generate_analysis():
+    # ... (function is unchanged from Gemini implementation)
+    pass
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
