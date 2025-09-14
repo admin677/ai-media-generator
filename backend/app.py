@@ -12,39 +12,47 @@ CORS(app)
 
 # --- API Configuration ---
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
-IMAGE_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY") # New Pexels Key
+
 VIDEO_API_URL_START = "https://api.stability.ai/v2beta/image-to-video"
 VIDEO_API_URL_RESULT = "https://api.stability.ai/v2beta/image-to-video/result"
 UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conservative"
+PEXELS_SEARCH_URL = "https://api.pexels.com/v1/search" # New Pexels URL
 
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
-    # No longer checks for auth token
+    # This function now searches Pexels for a free stock photo
     json_data = request.get_json()
     prompt = json_data.get('prompt')
     if not prompt: return jsonify({'error': 'Prompt is required'}), 400
-    if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
+    if not PEXELS_API_KEY: return jsonify({'error': 'Pexels API key not found'}), 500
     
-    print(f"Generating image for prompt: {prompt}")
+    print(f"Searching for image with prompt: {prompt}")
     try:
-        response = requests.post(
-            IMAGE_API_URL,
-            headers={"Authorization": f"Bearer {STABILITY_API_KEY}","Content-Type": "application/json","Accept": "application/json"},
-            json={ "text_prompts": [{"text": prompt}], "cfg_scale": 7, "height": 1024, "width": 1024, "samples": 1, "steps": 30 },
+        response = requests.get(
+            PEXELS_SEARCH_URL,
+            headers={"Authorization": PEXELS_API_KEY},
+            params={"query": prompt, "per_page": 1, "orientation": "landscape"}
         )
         response.raise_for_status()
         data = response.json()
-        image_b64 = data["artifacts"][0]["base64"]
-        return jsonify({'image_b64': image_b64})
+        
+        if data['photos']:
+            # If photos are found, return the URL of the first one
+            image_url = data['photos'][0]['src']['large2x']
+            return jsonify({'image_url': image_url})
+        else:
+            # If no photos are found for the prompt
+            return jsonify({'error': 'No images found for that prompt. Try a different search term.'}), 404
+
     except requests.exceptions.RequestException as e:
-        print(f"Error calling Stability AI API for image generation: {e}")
-        return jsonify({'error': 'Failed to generate image from API'}), 500
+        print(f"Error calling Pexels API: {e}")
+        return jsonify({'error': 'Failed to search for image from API.'}), 500
 
 
 @app.route('/generate-video', methods=['POST'])
 def generate_video():
-    # No longer checks for auth token
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     
@@ -87,7 +95,6 @@ def generate_video():
 
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
-    # No longer checks for auth token
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400

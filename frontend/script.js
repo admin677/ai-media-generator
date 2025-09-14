@@ -18,9 +18,6 @@ if (savedTheme === 'dark') {
 
 // --- Main Application Logic ---
 document.addEventListener('DOMContentLoaded', () => {
-    // This script now only contains logic relevant to the generator page.
-    // All old menu/modal logic has been removed.
-
     // --- Element Selectors ---
     const imageModeBtn = document.getElementById('image-mode-btn');
     const videoModeBtn = document.getElementById('video-mode-btn');
@@ -39,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
 
     // --- Tab Switching Logic ---
-    if (imageModeBtn && videoModeBtn && imagePanel && videoPanel) {
+    if (imageModeBtn) {
         imageModeBtn.addEventListener('click', () => {
             imagePanel.classList.remove('hidden');
             videoPanel.classList.add('hidden');
@@ -54,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Image Generation ---
+    // --- Image Generation (from Pexels) ---
     if (generateImgBtn) {
         generateImgBtn.addEventListener("click", async () => {
             const prompt = promptInput.value;
@@ -74,18 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                resultImage.src = `data:image/png;base64,${data.image_b64}`;
+                resultImage.src = data.image_url; // Use the direct URL from Pexels
                 resultImage.style.display = "block";
             } catch (error) {
-                console.error("Error generating image:", error);
-                alert(`Failed to generate image. Error: ${error.message}`);
+                console.error("Error fetching image:", error);
+                alert(`Failed to get image. Error: ${error.message}`);
             } finally {
                 setLoading('img', false);
             }
         });
     }
 
-    // --- Video Generation ---
+    // --- Video Generation (from Stability AI) ---
     if (generateVidBtn) {
         imageUpload.addEventListener('change', () => {
             if(uploadFilename) {
@@ -93,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         generateVidBtn.addEventListener('click', async () => {
+            // NOTE: This part still requires a login and Stability AI credits.
+            // You may want to add a check here like `if (!firebase.auth().currentUser)`
             if (imageUpload.files.length === 0) {
                 alert('Please choose an image file first.');
                 return;
