@@ -209,6 +209,43 @@ body {
 .legal { border-color: #dc3545; }
 .environmental { border-color: #20c997; }
 
+/* --- Download Button --- */
+.download-area {
+    text-align: center;
+    margin-top: 40px;
+}
+#download-btn {
+    background-color: var(--strengths-color);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+#download-btn:hover {
+    background-color: #157347;
+    transform: translateY(-2px);
+}
+#download-btn.hidden {
+    display: none;
+}
+
+/* --- Watermark --- */
+#watermark {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 10;
+}
+#watermark img {
+    width: 100px;
+}
+
 /* --- Footer --- */
 .main-footer {
     text-align: center;
