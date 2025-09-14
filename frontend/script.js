@@ -1,14 +1,16 @@
 // --- Theme Switcher Logic ---
 const themeSwitcher = document.getElementById('theme-switcher');
 const body = document.body;
-themeSwitcher.addEventListener('click', () => {
-    body.classList.toggle('dark-theme');
-    if (body.classList.contains('dark-theme')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
-    }
-});
+if (themeSwitcher) {
+    themeSwitcher.addEventListener('click', () => {
+        body.classList.toggle('dark-theme');
+        if (body.classList.contains('dark-theme')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme === 'dark') {
     body.classList.add('dark-theme');
@@ -16,6 +18,7 @@ if (savedTheme === 'dark') {
 
 // --- Main Application Logic ---
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Element Selectors ---
     const imageModeBtn = document.getElementById('image-mode-btn');
     const videoModeBtn = document.getElementById('video-mode-btn');
     const imagePanel = document.getElementById('image-generator-panel');
@@ -32,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
 
     // --- Tab Switching Logic ---
-    if (imageModeBtn) {
+    if (imageModeBtn && videoModeBtn && imagePanel && videoPanel) {
         imageModeBtn.addEventListener('click', () => {
             imagePanel.classList.remove('hidden');
             videoPanel.classList.add('hidden');

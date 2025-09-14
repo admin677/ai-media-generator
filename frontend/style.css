@@ -27,7 +27,7 @@ body {
     background: var(--bg-color);
     color: var(--text-color);
     margin: 0;
-    padding: 120px 20px 40px; /* Top padding for fixed header */
+    padding: 120px 20px 40px;
     box-sizing: border-box;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -79,8 +79,6 @@ body {
 .main-nav a:hover::after {
     width: 100%;
 }
-
-/* --- Theme Switcher Button --- */
 #theme-switcher {
     position: static;
     background: var(--surface-color);
@@ -131,9 +129,6 @@ textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 
 button { background-color: var(--primary-color); color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; margin-top: 15px; transition: background-color 0.3s, transform 0.2s; }
 button:hover { background-color: var(--primary-hover-color); transform: translateY(-2px); }
 button:disabled { background-color: color-mix(in srgb, var(--primary-color) 50%, var(--surface-color)); cursor: not-allowed; transform: none; }
-.upload-label { display: block; padding: 14px; border: 1px dashed var(--border-color); border-radius: 8px; background-color: var(--input-bg-color); cursor: pointer; transition: border-color 0.3s, background-color 0.3s; text-align: center; color: var(--subtle-text-color); }
-#image-upload { display: none; }
-.upload-label:hover { border-color: var(--primary-color); background-color: color-mix(in srgb, var(--input-bg-color) 80%, var(--primary-color)); }
 .result-area { margin-top: 30px; min-height: 300px; display: flex; justify-content: center; align-items: center; border: 2px dashed var(--border-color); border-radius: 12px; padding: 10px; transition: border-color 0.3s; }
 #result-image, #result-video { max-width: 100%; max-height: 512px; border-radius: 8px; display: none; }
 #result-video { background-color: #000; }
