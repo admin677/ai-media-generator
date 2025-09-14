@@ -10,9 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const watermark = document.getElementById('watermark');
 
     const BACKEND_URL = "https://my-ai-generator-backend.onrender.com";
-    let activeAnalysisType = 'SWOT'; // Default
+    let activeAnalysisType = 'SWOT';
 
-    // --- Tab Switching Logic ---
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
@@ -20,20 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
             activeAnalysisType = tab.dataset.type;
 
             panels.forEach(panel => {
-                // A simple way to match panel id (e.g., 'swot-panel') with the data-type ('SWOT')
                 const panelType = panel.id.split('-')[0].toUpperCase();
-                const activeType = activeAnalysisType.split("'")[0].toUpperCase(); // Handles "Porter's"
-                
-                if (panelType === activeType) {
-                    panel.classList.remove('hidden');
-                } else {
-                    panel.classList.add('hidden');
-                }
+                const activeType = activeAnalysisType.split(' ')[0].toUpperCase();
+                panel.classList.toggle('hidden', panelType !== activeType);
             });
         });
     });
 
-    // --- Generate Button Logic ---
     generateBtn.addEventListener('click', async () => {
         const topic = topicInput.value;
         if (!topic) {
@@ -43,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         spinner.classList.remove('hidden');
         errorMessage.classList.add('hidden');
-        downloadBtn.classList.add('hidden'); // Hide button on new generation
+        downloadBtn.classList.add('hidden');
         clearAllLists();
 
         try {
@@ -52,16 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ topic: topic, analysis_type: activeAnalysisType }),
             });
-
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || 'An unknown error occurred.');
             }
-
             const data = await response.json();
-            populateTables(data);
-            downloadBtn.classList.remove('hidden'); // Show button on success
-
+            populateTables(data, activeAnalysisType);
+            downloadBtn.classList.remove('hidden');
         } catch (error) {
             errorMessage.textContent = `Error: ${error.message}`;
             errorMessage.classList.remove('hidden');
@@ -71,79 +60,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Download Logic ---
     downloadBtn.addEventListener('click', () => {
-        watermark.classList.remove('hidden'); // Show watermark before screenshot
-        
         const activePanel = document.querySelector('.analysis-panel:not(.hidden)');
-        if (!activePanel) {
-            watermark.classList.add('hidden');
-            return;
-        }
+        if (!activePanel) return;
+        
+        watermark.classList.remove('hidden');
 
         html2canvas(activePanel, {
             backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-color') || '#f8f9fa',
-            onclone: (document) => {
-                // Make the watermark visible in the clone for the screenshot
-                const clonedWatermark = document.getElementById('watermark');
-                if(clonedWatermark) {
-                    clonedWatermark.classList.remove('hidden');
-                }
+            onclone: (doc) => {
+                const clonedWatermark = doc.getElementById('watermark');
+                if(clonedWatermark) clonedWatermark.classList.remove('hidden');
             }
         }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `${activeAnalysisType.replace("'", "")}_Analysis_${topicInput.value}.png`;
+            link.download = `${activeAnalysisType}_Analysis_${topicInput.value}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            watermark.classList.add('hidden'); // Hide watermark again after screenshot
+            watermark.classList.add('hidden');
         });
     });
 
-    function populateTables(data) {
-        // This function populates all tables, but only the active one will be visible
-        
-        // SWOT Data
-        populateList('swot-strengths', data.strengths || data.Strengths);
-        populateList('swot-weaknesses', data.weaknesses || data.Weaknesses);
-        populateList('swot-opportunities', data.opportunities || data.Opportunities);
-        populateList('swot-threats', data.threats || data.Threats);
-        
-        // PESTLE Data
-        populateList('pestle-political', data.political || data.Political);
-        populateList('pestle-economic', data.economic || data.Economic);
-        populateList('pestle-social', data.social || data.Social);
-        populateList('pestle-technological', data.technological || data.Technological);
-        populateList('pestle-legal', data.legal || data.Legal);
-        populateList('pestle-environmental', data.environmental || data.Environmental);
-
-        // Porter's Five Forces Data
-        populateList('porters-new-entrants', data['threat_of_new_entrants'] || data["Threat of New Entrants"]);
-        populateList('porters-buyer-power', data['bargaining_power_of_buyers'] || data["Bargaining Power of Buyers"]);
-        populateList('porters-supplier-power', data['bargaining_power_of_suppliers'] || data["Bargaining Power of Suppliers"]);
-        populateList('porters-substitutes', data['threat_of_substitute_products'] || data["Threat of Substitute Products"]);
-        populateList('porters-rivalry', data['industry_rivalry'] || data["Industry Rivalry"]);
+    function populateTables(data, type) {
+        if (type === 'SWOT') {
+            populateList('swot-strengths', data.strengths);
+            populateList('swot-weaknesses', data.weaknesses);
+            populateList('swot-opportunities', data.opportunities);
+            populateList('swot-threats', data.threats);
+        } else if (type === 'PESTLE') {
+            populateList('pestle-political', data.political);
+            populateList('pestle-economic', data.economic);
+            populateList('pestle-social', data.social);
+            populateList('pestle-technological', data.technological);
+            populateList('pestle-legal', data.legal);
+            populateList('pestle-environmental', data.environmental);
+        } else if (type === 'Porters Five Forces') {
+            populateList('porters-new-entrants', data.threat_of_new_entrants);
+            populateList('porters-buyer-power', data.bargaining_power_of_buyers);
+            populateList('porters-supplier-power', data.bargaining_power_of_suppliers);
+            populateList('porters-substitutes', data.threat_of_substitute_products);
+            populateList('porters-rivalry', data.industry_rivalry);
+        }
     }
 
     function populateList(ulId, items) {
         const ul = document.getElementById(ulId);
-        if (ul && items && Array.isArray(items)) {
-            ul.innerHTML = ''; // Clear previous items
-            if(items.length === 0) {
-                const li = document.createElement('li');
-                li.textContent = 'No data available.';
-                ul.appendChild(li);
-                return;
-            }
+        if (!ul) return;
+        ul.innerHTML = '';
+        if (items && Array.isArray(items) && items.length > 0) {
             items.forEach(text => {
                 const li = document.createElement('li');
                 li.textContent = text;
                 ul.appendChild(li);
             });
+        } else {
+            ul.innerHTML = '<li>No data generated for this category.</li>';
         }
     }
     
     function clearAllLists() {
-        const allLists = document.querySelectorAll('.analysis-grid ul');
-        allLists.forEach(ul => ul.innerHTML = '');
+        document.querySelectorAll('.analysis-grid ul').forEach(ul => ul.innerHTML = '');
     }
 });
