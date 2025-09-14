@@ -130,8 +130,16 @@ button { background-color: var(--primary-color); color: white; border: none; pad
 button:hover { background-color: var(--primary-hover-color); transform: translateY(-2px); }
 button:disabled { background-color: color-mix(in srgb, var(--primary-color) 50%, var(--surface-color)); cursor: not-allowed; transform: none; }
 .result-area { margin-top: 30px; min-height: 300px; display: flex; justify-content: center; align-items: center; border: 2px dashed var(--border-color); border-radius: 12px; padding: 10px; transition: border-color 0.3s; }
-#result-image, #result-video { max-width: 100%; max-height: 512px; border-radius: 8px; display: none; }
+
+/* UPDATED Image and Video Styles */
+#result-image, #result-video { 
+    max-width: 100%; 
+    height: auto; /* Ensures aspect ratio is maintained */
+    border-radius: 8px; 
+    display: none; 
+}
 #result-video { background-color: #000; }
+
 .loading-spinner { border: 6px solid var(--border-color); border-top: 6px solid var(--primary-color); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
 .hidden { display: none; }
 .footer-links { margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px; }
