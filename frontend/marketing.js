@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             panels.forEach(panel => {
                 const panelType = panel.id.split('-')[0].toUpperCase();
-                const activeType = activeAnalysisType.split(' ')[0].toUpperCase();
+                const activeType = activeAnalysisType.split(' ')[0].toUpperCase().replace("'", ""); // Handles Porter's
                 panel.classList.toggle('hidden', panelType !== activeType);
             });
         });
