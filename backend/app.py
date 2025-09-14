@@ -15,7 +15,7 @@ if os.getenv("GOOGLE_API_KEY"):
 
 app = Flask(__name__)
 
-# This CORS configuration allows your live site to talk to the backend
+# --- CORS CONFIGURATION ---
 origins = [
     "https://growthgramai.com",
     "https://growthgramai.netlify.app"
@@ -81,7 +81,6 @@ def generate_video():
 
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
-    # This endpoint still requires a login on the frontend
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
     if 'image' not in request.files: return jsonify({'error': 'No image file provided'}), 400
     if 'prompt' not in request.form: return jsonify({'error': 'No prompt provided'}), 400
@@ -113,10 +112,12 @@ def generate_analysis():
     if not topic or not analysis_type:
         return jsonify({'error': 'A topic and analysis type are required'}), 400
 
+    print(f"Generating {analysis_type} analysis for topic: {topic}")
     prompt = f"Generate a detailed {analysis_type} analysis for the following topic: {topic}. Return ONLY a raw JSON object (no markdown formatting like ```json). For SWOT, the keys must be lowercase 'strengths', 'weaknesses', 'opportunities', 'threats'. For PESTLE, keys must be lowercase 'political', 'economic', 'social', 'technological', 'legal', 'environmental'. For Porter's Five Forces, keys must be lowercase and use underscores: 'threat_of_new_entrants', 'bargaining_power_of_buyers', 'bargaining_power_of_suppliers', 'threat_of_substitute_products', 'industry_rivalry'. Each key's value must be an array of strings, with each string being a concise bullet point."
 
     try:
-        model = genai.GenerativeModel('gemini-pro')
+        # UPDATED to the latest model name
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         cleaned_json_string = response.text.strip()
         analysis_data = json.loads(cleaned_json_string)
