@@ -30,64 +30,61 @@
 
     <main class="tool-container">
         <div class="tool-header">
-            <h1>Marketing Strategy Tools</h1>
-            <p>Select a tool to build your analysis.</p>
+            <h1>AI-Powered Strategy Tools</h1>
+            <p>Enter a company, product, or topic to automatically generate a strategic analysis.</p>
+            <div class="topic-input-area">
+                <input type="text" id="topic-input" placeholder="e.g., Tesla's electric vehicle business">
+                <button id="generate-analysis-btn">Generate Analysis</button>
+            </div>
             <div class="tool-switcher">
-                <button id="swot-btn" class="tool-tab active">SWOT Analysis</button>
-                <button id="pestle-btn" class="tool-tab">PESTLE Analysis</button>
+                <button id="swot-btn" class="tool-tab active" data-type="SWOT">SWOT</button>
+                <button id="pestle-btn" class="tool-tab" data-type="PESTLE">PESTLE</button>
+                <button id="porters-btn" class="tool-tab" data-type="Porter's Five Forces">Porter's 5 Forces</button>
             </div>
         </div>
 
+        <div id="loading-spinner" class="loading-spinner hidden"></div>
+        <p id="error-message" class="error-text hidden"></p>
+
         <div id="swot-panel" class="analysis-panel">
-            <div class="swot-grid">
-                <div class="grid-item strengths">
-                    <h2>Strengths</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter strengths..."></div>
-                </div>
-                <div class="grid-item weaknesses">
-                    <h2>Weaknesses</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter weaknesses..."></div>
-                </div>
-                <div class="grid-item opportunities">
-                    <h2>Opportunities</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter opportunities..."></div>
-                </div>
-                <div class="grid-item threats">
-                    <h2>Threats</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter threats..."></div>
-                </div>
+            <div class="swot-grid analysis-grid">
+                <div class="grid-item strengths"><h2>Strengths</h2><ul id="swot-strengths"></ul></div>
+                <div class="grid-item weaknesses"><h2>Weaknesses</h2><ul id="swot-weaknesses"></ul></div>
+                <div class="grid-item opportunities"><h2>Opportunities</h2><ul id="swot-opportunities"></ul></div>
+                <div class="grid-item threats"><h2>Threats</h2><ul id="swot-threats"></ul></div>
             </div>
         </div>
 
         <div id="pestle-panel" class="analysis-panel hidden">
-            <div class="pestle-grid">
-                <div class="grid-item political">
-                    <h2>Political</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter political factors..."></div>
-                </div>
-                <div class="grid-item economic">
-                    <h2>Economic</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter economic factors..."></div>
-                </div>
-                <div class="grid-item social">
-                    <h2>Social</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter social factors..."></div>
-                </div>
-                <div class="grid-item technological">
-                    <h2>Technological</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter technological factors..."></div>
-                </div>
-                <div class="grid-item legal">
-                    <h2>Legal</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter legal factors..."></div>
-                </div>
-                <div class="grid-item environmental">
-                    <h2>Environmental</h2>
-                    <div class="editable-content" contenteditable="true" placeholder="Enter environmental factors..."></div>
-                </div>
+            <div class="pestle-grid analysis-grid">
+                <div class="grid-item political"><h2>Political</h2><ul id="pestle-political"></ul></div>
+                <div class="grid-item economic"><h2>Economic</h2><ul id="pestle-economic"></ul></div>
+                <div class="grid-item social"><h2>Social</h2><ul id="pestle-social"></ul></div>
+                <div class="grid-item technological"><h2>Technological</h2><ul id="pestle-technological"></ul></div>
+                <div class="grid-item legal"><h2>Legal</h2><ul id="pestle-legal"></ul></div>
+                <div class="grid-item environmental"><h2>Environmental</h2><ul id="pestle-environmental"></ul></div>
+            </div>
+        </div>
+
+        <div id="porters-panel" class="analysis-panel hidden">
+            <div class="porters-grid analysis-grid">
+                 <div class="grid-item"><h2>Threat of New Entrants</h2><ul id="porters-new-entrants"></ul></div>
+                 <div class="grid-item"><h2>Bargaining Power of Buyers</h2><ul id="porters-buyer-power"></ul></div>
+                 <div class="grid-item"><h2>Bargaining Power of Suppliers</h2><ul id="porters-supplier-power"></ul></div>
+                 <div class="grid-item"><h2>Threat of Substitute Products</h2><ul id="porters-substitutes"></ul></div>
+                 <div class="grid-item"><h2>Industry Rivalry</h2><ul id="porters-rivalry"></ul></div>
             </div>
         </div>
     </main>
+
+    <footer class="main-footer">
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <span>|</span>
+            <a href="terms.html">Terms & Conditions</a>
+        </div>
+        <p>&copy; 2025 The Growth Gram. All Rights Reserved.</p>
+    </footer>
 
     <script src="marketing.js"></script>
 </body>
