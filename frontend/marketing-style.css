@@ -1,0 +1,162 @@
+:root {
+    --primary-color: #0d6efd;
+    --dark-blue: #002244;
+    --bg-color: #f8f9fa;
+    --surface-color: #ffffff;
+    --text-color: #212529;
+    --subtle-text-color: #6c757d;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.075);
+    
+    --strengths-color: #198754;
+    --weaknesses-color: #dc3545;
+    --opportunities-color: #ffc107;
+    --threats-color: #6f42c1;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* --- Header --- */
+.main-header {
+    background-color: var(--surface-color);
+    padding: 15px 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    border-bottom: 1px solid var(--border-color);
+}
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.logo { height: 50px; width: auto; }
+.main-nav {
+    display: flex;
+    gap: 30px;
+}
+.main-nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: color 0.3s;
+}
+.main-nav a:hover {
+    color: var(--primary-color);
+}
+.ai-generator-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* --- Tool Page Layout --- */
+.tool-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+.tool-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.tool-header h1 {
+    font-size: 2.5rem;
+    color: var(--dark-blue);
+    margin-bottom: 10px;
+}
+.tool-header p {
+    color: var(--subtle-text-color);
+    font-size: 1.1rem;
+}
+.tool-switcher {
+    display: inline-flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 5px;
+    margin-top: 20px;
+}
+.tool-tab {
+    padding: 10px 25px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--subtle-text-color);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+.tool-tab.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+}
+.analysis-panel.hidden {
+    display: none;
+}
+
+/* --- SWOT & PESTLE Grids --- */
+.swot-grid, .pestle-grid {
+    display: grid;
+    gap: 20px;
+}
+.swot-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.pestle-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+.grid-item {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    border-top: 4px solid;
+}
+.grid-item h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+.editable-content {
+    min-height: 150px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+    line-height: 1.6;
+}
+.editable-content:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+.editable-content:empty:before {
+    content: attr(placeholder);
+    color: #ced4da;
+    pointer-events: none;
+}
+
+/* --- Color Coding --- */
+.strengths { border-color: var(--strengths-color); }
+.weaknesses { border-color: var(--weaknesses-color); }
+.opportunities { border-color: var(--opportunities-color); }
+.threats { border-color: var(--threats-color); }
+.political { border-color: #6f42c1; }
+.economic { border-color: #198754; }
+.social { border-color: #ffc107; }
+.technological { border-color: #0dcaf0; }
+.legal { border-color: #dc3545; }
+.environmental { border-color: #20c997; }
