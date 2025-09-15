@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Persona Generator - The Growth Gram</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../consulting-style.css"> <link rel="stylesheet" href="persona-style.css"> </head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <a href="../index.html">
+                <img src="../logo.png" alt="Growth Gram Logo" class="logo">
+            </a>
+            <nav class="main-nav">
+                <a href="../index.html">Homepage</a>
+                <a href="../generator.html">AI Generators</a>
+                <a href="../marketing.html">Marketing Tools</a>
+                <a href="../about.html">About Us</a>
+                <a href="../services.html">Our Services</a>
+            </nav>
+            <nav>
+                <a href="../auth.html" class="ai-generator-btn">Log In / Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="tool-container">
+        <div class="tool-header">
+            <h1>AI Customer Persona Generator</h1>
+            <p>Describe your product or business to generate detailed customer personas.</p>
+            <div class="topic-input-area">
+                <input type="text" id="topic-input" placeholder="e.g., A new brand of eco-friendly running shoes">
+                <button id="generate-personas-btn">Generate Personas</button>
+            </div>
+        </div>
+
+        <div id="loading-spinner" class="loading-spinner hidden"></div>
+        <p id="error-message" class="error-text hidden"></p>
+
+        <div id="personas-grid" class="personas-grid">
+            </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-links">
+            <a href="../privacy.html">Privacy Policy</a>
+            <span>|</span>
+            <a href="../terms.html">Terms & Conditions</a>
+        </div>
+        <p>&copy; 2025 The Growth Gram. All Rights Reserved.</p>
+    </footer>
+
+    <script src="persona.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+/* --- Tool Page Layout --- */
+.tool-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+.tool-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.tool-header h1 {
+    font-size: 2.5rem;
+    color: var(--dark-blue);
+    margin-bottom: 10px;
+}
+.tool-header p {
+    color: var(--subtle-text-color);
+    font-size: 1.1rem;
+}
+.topic-input-area {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+#topic-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 16px;
+}
+#generate-personas-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- Persona Grid & Card Styles --- */
+.personas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+.persona-card {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+.persona-card h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+.persona-card h3 {
+    font-size: 1rem;
+    color: var(--dark-blue);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-top: 20px;
+}
+.persona-card p, .persona-card li {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.persona-card ul {
+    padding-left: 20px;
+}
+
+/* --- Loading Spinner & Error --- */
+.loading-spinner {
+    border: 6px solid var(--border-color);
+    border-top: 6px solid var(--primary-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 40px auto;
+}
+.hidden {
+    display: none;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.error-text {
+    color: #dc3545;
+    font-weight: 600;
+    text-align: center;
+}
