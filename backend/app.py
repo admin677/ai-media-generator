@@ -22,17 +22,15 @@ origins = [
 ]
 CORS(app, resources={r"/*": {"origins": origins}})
 
-
 # --- API Configuration ---
 STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 
 PEXELS_PHOTO_SEARCH_URL = "https://api.pexels.com/v1/search"
 PEXELS_VIDEO_SEARCH_URL = "https://api.pexels.com/v1/videos/search"
-UPSCALE_API_URL = "https://api.stability.ai/v2beta/stable-image/upscale/conservative"
+UPSCALE_API_URL = "https://api.stability.ai/v2/stable-image/upscale/conservative"
 VIDEO_API_URL_START = "https://api.stability.ai/v2/generation/image-to-video"
 VIDEO_API_URL_RESULT = "https://api.stability.ai/v2/generation/image-to-video/result"
-
 
 @app.route('/generate-image', methods=['POST'])
 def generate_image():
@@ -55,7 +53,6 @@ def generate_image():
             return jsonify({'error': 'No images found for that prompt.'}), 404
     except requests.exceptions.RequestException as e:
         return jsonify({'error': 'Failed to search for image from API.'}), 500
-
 
 @app.route('/generate-video', methods=['POST'])
 def generate_video():
@@ -86,7 +83,6 @@ def generate_video():
     except requests.exceptions.RequestException as e:
         return jsonify({'error': f"An error occurred: {e}"}), 500
 
-
 @app.route('/upscale-image', methods=['POST'])
 def upscale_image():
     if not STABILITY_API_KEY: return jsonify({'error': 'API key not found'}), 500
@@ -114,17 +110,14 @@ def generate_analysis():
     json_data = request.get_json()
     topic, analysis_type = json_data.get('topic'), json_data.get('analysis_type')
     if not topic or not analysis_type: return jsonify({'error': 'A topic and analysis type are required'}), 400
-    
     prompt = f"Generate a detailed {analysis_type} analysis for: \"{topic}\". Return ONLY a raw JSON object."
-    
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         analysis_data = json.loads(response.text.strip().replace('```json', '').replace('```', ''))
         return jsonify(analysis_data)
     except Exception as e:
-        print(f"Error calling Google AI API: {e}")
-        return jsonify({'error': f'Failed to generate analysis. The AI may be unable to process this topic. Error: {str(e)}'}), 500
+        return jsonify({'error': f'Failed to generate analysis. Error: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
