@@ -4,3 +4,9 @@ python-dotenv
 flask-cors
 gunicorn
 google-generativeai
+
+
+
+
+
+
