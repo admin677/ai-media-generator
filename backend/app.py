@@ -136,7 +136,7 @@ def generate_analysis():
 
     try:
         # --- THIS IS THE CORRECTED LINE ---
-        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        model = genai.GenerativeModel('gemini-1.5-pro')
         
         response = model.generate_content(prompt)
         
