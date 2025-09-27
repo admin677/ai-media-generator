@@ -135,9 +135,7 @@ def generate_analysis():
     """
 
     try:
-        # --- THIS IS THE CORRECTED LINE ---
-        model = genai.GenerativeModel('gemini-1.5-pro')
-        
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
         cleaned_json_string = response.text.strip().replace('```json', '').replace('```', '')
@@ -152,58 +150,3 @@ def generate_analysis():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
-# (Keep all your other code the same, just replace this one function)
-
-@app.route('/generate-analysis', methods=['POST'])
-def generate_analysis():
-    if not os.getenv("GOOGLE_API_KEY"):
-        return jsonify({'error': 'Google AI API key not found'}), 500
-
-    json_data = request.get_json()
-    topic = json_data.get('topic')
-    analysis_type = json_data.get('analysis_type')
-    if not topic or not analysis_type:
-        return jsonify({'error': 'A topic and analysis type are required'}), 400
-
-    print(f"Generating {analysis_type} analysis for topic: {topic}")
-
-    # The prompt is slightly simplified because JSON mode will handle the formatting.
-    prompt = f"""
-    Generate a detailed {analysis_type} analysis for the topic: "{topic}".
-    Use the following exact keys:
-    - For SWOT: "strengths", "weaknesses", "opportunities", "threats"
-    - For PESTLE: "political", "economic", "social", "technological", "legal", "environmental"
-    - For Porters Five Forces: "threat_of_new_entrants", "bargaining_power_of_buyers", "bargaining_power_of_suppliers", "threat_of_substitute_products", "industry_rivalry"
-    The value for each key must be an array of short, concise strings.
-    """
-
-    try:
-        # --- NEW: Configure the model to use JSON mode ---
-        model = genai.GenerativeModel(
-            'gemini-1.5-pro',
-            generation_config={"response_mime_type": "application/json"}
-        )
-        
-        response = model.generate_content(prompt)
-
-        # --- NEW: Better logging for debugging ---
-        print("--- RAW AI RESPONSE ---")
-        print(response.text)
-        print("-----------------------")
-
-        # The response.text should now be a perfect JSON string
-        analysis_data = json.loads(response.text)
-        return jsonify(analysis_data)
-
-    except json.JSONDecodeError as e:
-        # This catches errors if the response is STILL not valid JSON
-        print(f"JSON Parsing Error: {e}")
-        error_message = f'Failed to generate analysis. The AI returned an invalid format.'
-        return jsonify({'error': error_message}), 500
-    except Exception as e:
-        # This catches all other errors, like the API call failing
-        print(f"An unexpected error occurred: {e}")
-        error_message = f'Failed to generate analysis. Could not connect to the AI service.'
-        return jsonify({'error': error_message}), 500
-
-# (Keep your __main__ block the same)
