@@ -135,7 +135,9 @@ def generate_analysis():
     """
 
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # --- THIS IS THE CORRECTED LINE ---
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        
         response = model.generate_content(prompt)
         
         cleaned_json_string = response.text.strip().replace('```json', '').replace('```', '')
